@@ -28,7 +28,18 @@ def translate_sequence(rna_sequence, genetic_code):
     str
         A string of the translated amino acids.
     """
-    pass
+    protein = []
+    seq_list = list(rna_sequence)
+    if len(seq_list)%3 == 0:
+        for i in range(0, len(seq_list), 3):
+            codon = seq_list[i:i + 3]
+            protein+= genetic_code[codon]
+            if protein == '*': 
+                break
+    if len(seq_list) < 3 or seq_list.startswith('*'):
+        return ""
+    return (''.join(protein))
+
 
 def get_all_translations(rna_sequence, genetic_code):
     """Get a list of all amino acid sequences encoded by an RNA sequence.
@@ -61,7 +72,19 @@ def get_all_translations(rna_sequence, genetic_code):
         A list of strings; each string is an sequence of amino acids encoded by
         `rna_sequence`.
     """
-    pass
+    seq_list = list(rna_sequence)
+    #start_index = seq_list.index('AUG')
+    pp_list = []
+    Index = len(rna_sequence) - 3
+    for i in xrange(Index + 1):
+        start_codon = seq_list[i:i+3]
+        if start_codon == 'AUG':
+            pp = translate_sequence(seq_list[i:], genetic_code)
+            if pp == 0:
+                return ""
+            pp_list.append(pp)
+    return pp_list
+   
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
@@ -75,7 +98,11 @@ def get_reverse(sequence):
     >>> get_reverse('AUGC')
     'CGUA'
     """
-    pass
+    seq = sequence[::-1]
+    if sequence == 0:
+        return ""
+    return seq.upper() 
+   
 
 def get_complement(sequence):
     """Get the complement of a `sequence` of nucleotides.
@@ -89,7 +116,15 @@ def get_complement(sequence):
     >>> get_complement('AUGC')
     'UACG'
     """
-    pass
+    complement = {'A': 'U', 'C': 'G', 'G': 'C', 'U': 'A'}
+    comp = []
+    bases = list(sequence)
+    for i in bases:
+        comp.append(complement[i])
+        if sequence == 0:
+            return ""
+    return (''.join(comp))
+
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
@@ -104,7 +139,16 @@ def reverse_and_complement(sequence):
     >>> reverse_and_complement('AUGC')
     'GCAU'
     """
-    pass
+    complement = {'A': 'U', 'C': 'G', 'U': 'A', 'G': 'C'}
+    reverse_comp = []
+    bases = list(sequence)
+    bases.reverse()
+    for i in bases:
+        reverse_comp.append(complement[i])
+        if sequence ==0:
+            return ""
+    return (''.join(reverse_comp))
+
 
 def get_longest_peptide(rna_sequence, genetic_code):
     """Get the longest peptide encoded by an RNA sequence.
@@ -133,7 +177,17 @@ def get_longest_peptide(rna_sequence, genetic_code):
         A string of the longest sequence of amino acids encoded by
         `rna_sequence`.
     """
-    pass
+    RF6 = translate_sequence(rna_sequence)  
+    RF6_list = list(RF6)
+    RF3 = reverse_and_complement(rna_sequence)
+    RF3_list = list(RF3)
+    longest = ""
+    for i in RF6_list + RF3_list:
+        longest = max([i])
+    if translate_sequence(rna_sequence) == 0 or reverse_and_complement(rna_sequence) == 0:
+        return ""
+    return longest
+
 
 
 if __name__ == '__main__':
