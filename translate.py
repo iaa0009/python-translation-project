@@ -125,6 +125,8 @@ def get_complement(sequence):
             return ""
     return (''.join(comp))
 
+#You are very close here. The issue is that both the tests and the dictionary require the sequences to be in uppercase (they are case sensitive) so it fails when a test sequence has a lower case basepair. 
+#Try using .upper() on your string variable for sequence before you break it into a list. 
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
