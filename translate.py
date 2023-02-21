@@ -40,6 +40,11 @@ def translate_sequence(rna_sequence, genetic_code):
         return ""
     return (''.join(protein))
 
+# in your statement for i in range() you want the third value to be 1 not 3. 
+# Additionally, you should keep rna_sequence as a string rather than a list, and conver it to all uppercase at the top of your code. 
+# Finally, you should include another if statement under your for loop, that will only add a protein if the length of the codon == 3.
+# Otherwise, it will return any straggler base pairs that do not create a full codon. 
+# This should get you closer, and I am happy to provide more feedback once you get those initial errors taken care of!
 
 def get_all_translations(rna_sequence, genetic_code):
     """Get a list of all amino acid sequences encoded by an RNA sequence.
