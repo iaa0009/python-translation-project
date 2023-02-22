@@ -28,17 +28,20 @@ def translate_sequence(rna_sequence, genetic_code):
     str
         A string of the translated amino acids.
     """
-    protein = []
-    seq_list = list(rna_sequence)
-    if len(seq_list)%3 == 0:
-        for i in range(0, len(seq_list), 3):
-            codon = seq_list[i:i + 3]
-            protein+= genetic_code[codon]
-            if protein == '*': 
-                break
-    if len(seq_list) < 3 or seq_list.startswith('*'):
+    AA_list = []
+    seq = rna_sequence.upper()    
+    if len(seq) < 3 or seq.startswith('*'):
         return ""
-    return (''.join(protein))
+    #if len(seq)%3 == 0:
+    for i in range(0, len(seq), 3):
+        codon = seq[i:i + 3]
+        if codon in genetic_code and len(codon) == 3:
+            AA = genetic_code[codon]
+            AA_list.append(AA)
+            if AA == '*':      
+                break
+    return (''.join(AA_list))
+
 
 # in your statement for i in range() you want the third value to be 1 not 3. 
 # Additionally, you should keep rna_sequence as a string rather than a list, and conver it to all uppercase at the top of your code. 
@@ -123,10 +126,11 @@ def get_complement(sequence):
     """
     complement = {'A': 'U', 'C': 'G', 'G': 'C', 'U': 'A'}
     comp = []
-    bases = list(sequence)
+    seq = sequence.upper()
+    bases = list(seq)
     for i in bases:
         comp.append(complement[i])
-        if sequence == 0:
+        if seq == 0:
             return ""
     return (''.join(comp))
 
@@ -148,11 +152,12 @@ def reverse_and_complement(sequence):
     """
     complement = {'A': 'U', 'C': 'G', 'U': 'A', 'G': 'C'}
     reverse_comp = []
-    bases = list(sequence)
+    seq = sequence.upper()
+    bases = list(seq)
     bases.reverse()
     for i in bases:
         reverse_comp.append(complement[i])
-        if sequence ==0:
+        if seq ==0:
             return ""
     return (''.join(reverse_comp))
 
