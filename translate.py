@@ -29,7 +29,7 @@ def translate_sequence(rna_sequence, genetic_code):
         A string of the translated amino acids.
     """
     AA_list = []
-    seq = rna_sequence.upper()    
+    seq = rna_sequence.upper()
     if len(seq) < 3 or seq.startswith('*'):
         return ""
     #if len(seq)%3 == 0:
@@ -38,15 +38,15 @@ def translate_sequence(rna_sequence, genetic_code):
         if codon in genetic_code and len(codon) == 3:
             AA = genetic_code[codon]
             AA_list.append(AA)
-            if AA == '*':      
+            if AA == '*':
                 break
     return (''.join(AA_list))
 
 
-# in your statement for i in range() you want the third value to be 1 not 3. 
-# Additionally, you should keep rna_sequence as a string rather than a list, and conver it to all uppercase at the top of your code. 
+# in your statement for i in range() you want the third value to be 1 not 3.
+# Additionally, you should keep rna_sequence as a string rather than a list, and conver it to all uppercase at the top of your code.
 # Finally, you should include another if statement under your for loop, that will only add a protein if the length of the codon == 3.
-# Otherwise, it will return any straggler base pairs that do not create a full codon. 
+# Otherwise, it will return any straggler base pairs that do not create a full codon.
 # This should get you closer, and I am happy to provide more feedback once you get those initial errors taken care of!
 
 def get_all_translations(rna_sequence, genetic_code):
@@ -80,19 +80,21 @@ def get_all_translations(rna_sequence, genetic_code):
         A list of strings; each string is an sequence of amino acids encoded by
         `rna_sequence`.
     """
-    seq_list = list(rna_sequence)
+    seq = rna_sequence.upper()
     #start_index = seq_list.index('AUG')
     pp_list = []
-    Index = len(rna_sequence) - 3
-    for i in xrange(Index - 2):
-        start_codon = seq_list[i:i+3]
-        if start_codon == 'AUG':
-            pp = translate_sequence(seq_list[i:], genetic_code)
-            if pp == "":
-                return ""
-            pp_list.append(pp)
+    for i in range(3):
+        reading_frame = seq[i:]
+        start = 0
+        while start+3 <= len(reading_frame):
+              if reading_frame[start:start+3] == 'AUG':
+                  pp = translate_sequence(reading_frame[start:], genetic_code)
+                  if pp != "":
+                      pp_list.append(pp)
+                  start += 3
+              else:
+                  start +=1
     return pp_list
-   
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
@@ -109,8 +111,7 @@ def get_reverse(sequence):
     seq = sequence[::-1]
     if sequence == 0:
         return ""
-    return seq.upper() 
-   
+    return seq.upper()
 
 def get_complement(sequence):
     """Get the complement of a `sequence` of nucleotides.
@@ -135,7 +136,7 @@ def get_complement(sequence):
     return (''.join(comp))
 
 #You are very close here. The issue is that both the tests and the dictionary require the sequences to be in uppercase (they are case sensitive) so it fails when a test sequence has a lower case basepair. 
-#Try using .upper() on your string variable for sequence before you break it into a list. 
+#Try using .upper() on your string variable for sequence before you break it into a list.
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
@@ -200,7 +201,7 @@ def get_longest_peptide(rna_sequence, genetic_code):
         return ""
     longest_peptide = max(peptides, key=len)
     return longest_peptide
-    
+
 
 
 if __name__ == '__main__':
