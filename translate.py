@@ -30,19 +30,33 @@ def translate_sequence(rna_sequence, genetic_code):
     """
 
     seq = rna_sequence.upper()
-    AA_sequence = ""  
+#    AA_sequence = ""  
+    AA = ''
 
-    if len(seq) < 3 or rna_sequence[:3] in ['UGA', 'UAG', 'UAA']:
-        return ""
-    else:
-        for i in range(0, len(seq), 3):
-            codon = seq[i:i + 3]
-            if codon in genetic_code and len(codon) == 3:
-                AA = genetic_code[codon]
-                AA_sequence += AA
-                if AA == '*':
-                    break
-    return AA_sequence
+    for i in range(0, len(rna_sequence), 3):
+        codon = rna_sequence[i:i+3]
+        if codon in genetic_code:
+            if genetic_code[codon] == '*':
+                break
+            else:
+                AA += genetic_code[codon]
+        else:
+            break
+
+    return AA
+ 
+
+#    if len(seq) < 3 or rna_sequence[:3] in ['UGA', 'UAG', 'UAA']:
+#        return ""
+#    else:
+#        for i in range(0, len(seq), 3):
+#            codon = seq[i:i + 3]
+#            if codon in genetic_code and len(codon) == 3:
+#                AA = genetic_code[codon]
+#                AA_sequence += AA
+#                if AA == '*':
+#                    break
+#    return AA_sequence
 
    # start = seq.find('AUG')
     #if start!= -1:
@@ -96,19 +110,38 @@ def get_all_translations(rna_sequence, genetic_code):
     """
     seq = rna_sequence.upper()
     #start_index = seq_list.index('AUG')
-    pp_list = []
+    pp = []
+#    start = "AUG"
+#    for i in range(0,3):
+#        reading_frame = [seq[i:i+3] for i in range(0,len(seq),2)]
+#        amino_acids = ""
+#        for codon in reading_frame:
+#            if genetic_code[codon] == '*':
+#                break
+#            else:
+#                if codon in genetic_code and codon == "AUG":
+#                    amino_acids += genetic_code[codon]
+#                    pp.append(amino_acids)
+ #                   amino_acids = ""
+ #               else:
+ #                   break
+ #   return pp
+
     for i in range(3):
-        reading_frame = seq[i:]
-        start = 0
-        while start+3 <= len(reading_frame):
-              if reading_frame[start:start+3] == 'AUG':
-                  pp = translate_sequence(reading_frame[start:], genetic_code)
-                  if pp != "":
-                      pp_list.append(pp)
-                  start += 3
-              else:
-                  start +=1
-    return pp_list
+        protein_sequence = []
+        start = i
+        while start + 3 <= len(seq):
+            if seq[start:start+3] == 'AUG':
+                amino_acids = translate_sequence(seq[start:], genetic_code)
+                if pp != "":
+                    protein_sequence.append(amino_acids)
+                start += 3
+            else:
+                start +=1
+        if len(protein_sequence) > 0:
+            pp.append(protein_sequence)
+    return pp
+
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
