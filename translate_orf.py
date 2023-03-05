@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import sys
+import re
 import argparse
 from find_orf import find_first_orf
 from translate import translate_sequence

@@ -28,20 +28,34 @@ def translate_sequence(rna_sequence, genetic_code):
     str
         A string of the translated amino acids.
     """
-    AA_list = []
-    seq = rna_sequence.upper()
-    if len(seq) < 3 or seq.startswith('*'):
-        return ""
-    #if len(seq)%3 == 0:
-    for i in range(0, len(seq), 3):
-        codon = seq[i:i + 3]
-        if codon in genetic_code and len(codon) == 3:
-            AA = genetic_code[codon]
-            AA_list.append(AA)
-            if AA == '*':
-                break
-    return (''.join(AA_list))
 
+    seq = rna_sequence.upper()
+    AA_sequence = ""  
+
+    if len(seq) < 3 or rna_sequence[:3] in ['UGA', 'UAG', 'UAA']:
+        return ""
+    else:
+        for i in range(0, len(seq), 3):
+            codon = seq[i:i + 3]
+            if codon in genetic_code and len(codon) == 3:
+                AA = genetic_code[codon]
+                AA_sequence += AA
+                if AA == '*':
+                    break
+    return AA_sequence
+
+   # start = seq.find('AUG')
+    #if start!= -1:
+     #   while start+2 < len(seq):
+      #      codon = seq[start:start+3]
+       #     if codon in ["UAG", "UGA", "UAA"]: 
+        #        break
+         #   AA = genetic_code[codon]
+          #  start += 3
+           # AA_sequence += AA
+            #if start + 2 >= len(seq):
+             #   break
+#    return AA_sequence
 
 # in your statement for i in range() you want the third value to be 1 not 3.
 # Additionally, you should keep rna_sequence as a string rather than a list, and conver it to all uppercase at the top of your code.
