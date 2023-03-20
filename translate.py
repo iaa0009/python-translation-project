@@ -30,11 +30,9 @@ def translate_sequence(rna_sequence, genetic_code):
     """
 
     seq = rna_sequence.upper()
-#    AA_sequence = ""  
     AA = ''
-
     for i in range(0, len(rna_sequence), 3):
-        codon = rna_sequence[i:i+3]
+        codon = seq[i:i+3]
         if codon in genetic_code:
             if genetic_code[codon] == '*':
                 break
@@ -44,38 +42,6 @@ def translate_sequence(rna_sequence, genetic_code):
             break
 
     return AA
- 
-
-#    if len(seq) < 3 or rna_sequence[:3] in ['UGA', 'UAG', 'UAA']:
-#        return ""
-#    else:
-#        for i in range(0, len(seq), 3):
-#            codon = seq[i:i + 3]
-#            if codon in genetic_code and len(codon) == 3:
-#                AA = genetic_code[codon]
-#                AA_sequence += AA
-#                if AA == '*':
-#                    break
-#    return AA_sequence
-
-   # start = seq.find('AUG')
-    #if start!= -1:
-     #   while start+2 < len(seq):
-      #      codon = seq[start:start+3]
-       #     if codon in ["UAG", "UGA", "UAA"]: 
-        #        break
-         #   AA = genetic_code[codon]
-          #  start += 3
-           # AA_sequence += AA
-            #if start + 2 >= len(seq):
-             #   break
-#    return AA_sequence
-
-# in your statement for i in range() you want the third value to be 1 not 3.
-# Additionally, you should keep rna_sequence as a string rather than a list, and conver it to all uppercase at the top of your code.
-# Finally, you should include another if statement under your for loop, that will only add a protein if the length of the codon == 3.
-# Otherwise, it will return any straggler base pairs that do not create a full codon.
-# This should get you closer, and I am happy to provide more feedback once you get those initial errors taken care of!
 
 def get_all_translations(rna_sequence, genetic_code):
     """Get a list of all amino acid sequences encoded by an RNA sequence.
@@ -108,40 +74,30 @@ def get_all_translations(rna_sequence, genetic_code):
         A list of strings; each string is an sequence of amino acids encoded by
         `rna_sequence`.
     """
-    seq = rna_sequence.upper()
-    #start_index = seq_list.index('AUG')
-    pp = []
-#    start = "AUG"
-#    for i in range(0,3):
-#        reading_frame = [seq[i:i+3] for i in range(0,len(seq),2)]
-#        amino_acids = ""
-#        for codon in reading_frame:
-#            if genetic_code[codon] == '*':
-#                break
-#            else:
-#                if codon in genetic_code and codon == "AUG":
-#                    amino_acids += genetic_code[codon]
-#                    pp.append(amino_acids)
- #                   amino_acids = ""
- #               else:
- #                   break
- #   return pp
+    translations = []
 
-    for i in range(3):
-        protein_sequence = []
-        start = i
-        while start + 3 <= len(seq):
-            if seq[start:start+3] == 'AUG':
-                amino_acids = translate_sequence(seq[start:], genetic_code)
-                if pp != "":
-                    protein_sequence.append(amino_acids)
-                start += 3
-            else:
-                start +=1
-        if len(protein_sequence) > 0:
-            pp.append(protein_sequence)
-    return pp
+    for frame in range(3):
+        sequence = rna_sequence[frame:]
+        if len(sequence) % 3 != 0:
+            sequence = sequence[:-(len(sequence) % 3)]
+        amino_acids = ''
 
+        for i in range(0, len(sequence), 3):
+            codon = sequence[i:i+3].upper()
+            if codon == 'AUG':
+                amino_acids += genetic_code[codon]
+                for b in range(i+3, len(sequence), 3):
+                    codon = sequence[b:b+3].upper()
+                    if codon in genetic_code and genetic_code[codon] != '*':
+                        amino_acids += genetic_code[codon]
+                    else:
+                        translations.append(amino_acids)
+                        amino_acids = ''
+                        break
+                else:
+                    translations.append(amino_acids)
+                    amino_acids = ''
+    return translations if translations else []
 
 def get_reverse(sequence):
     """Reverse orientation of `sequence`.
@@ -182,8 +138,6 @@ def get_complement(sequence):
             return ""
     return (''.join(comp))
 
-#You are very close here. The issue is that both the tests and the dictionary require the sequences to be in uppercase (they are case sensitive) so it fails when a test sequence has a lower case basepair. 
-#Try using .upper() on your string variable for sequence before you break it into a list.
 
 def reverse_and_complement(sequence):
     """Get the reversed and complemented form of a `sequence` of nucleotides.
@@ -237,18 +191,18 @@ def get_longest_peptide(rna_sequence, genetic_code):
         A string of the longest sequence of amino acids encoded by
         `rna_sequence`.
     """
-    peptides = []
-    forward_translation = translate_sequence(rna_sequence)
-    if forward_translation != "":
-        peptides.append(forward_translation)
-    reverse_translation = translate_sequence(reverse_and_complement(rna_sequence))
-    if reverse_translation != "":
-        peptides.append(reverse_translation)
-    if not peptides:
-        return ""
-    longest_peptide = max(peptides, key=len)
-    return longest_peptide
+    amino_acids = []
+    for orf in range(6):
+        for seq in (get_all_translations(rna_sequence, genetic_code)[orf:], reverse_and_complement(rna_sequence)[orf:]):
+            for s in seq:
+                aa_seq = translate_sequence(s, genetic_code)
+                for i in range(len(aa_seq)):
+                    for j in range(i, len(aa_seq)):
+                        peptide = aa_seq[i:j+1]
+                        if '*' not in peptide:
+                            amino_acids.append(peptide)
 
+    return max(amino_acids, key=len, default="")
 
 
 if __name__ == '__main__':
@@ -279,3 +233,4 @@ if __name__ == '__main__':
     sys.stdout.write(message)
     if longest_peptide == "MYWHATAPYTHQNISTA":
         sys.stdout.write("Indeed.\n")
+ 
