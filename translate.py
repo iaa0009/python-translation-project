@@ -112,8 +112,8 @@ def get_reverse(sequence):
     'CGUA'
     """
     seq = sequence[::-1]
-    if sequence == 0:
-        return ""
+    if not seq:
+       return ""
     return seq.upper()
 
 def get_complement(sequence):
@@ -134,8 +134,8 @@ def get_complement(sequence):
     bases = list(seq)
     for i in bases:
         comp.append(complement[i])
-        if seq == 0:
-            return ""
+        if not seq:
+    	    return ""
     return (''.join(comp))
 
 
@@ -159,10 +159,9 @@ def reverse_and_complement(sequence):
     bases.reverse()
     for i in bases:
         reverse_comp.append(complement[i])
-        if seq ==0:
-            return ""
+    if not seq:
+        	return ""
     return (''.join(reverse_comp))
-
 
 def get_longest_peptide(rna_sequence, genetic_code):
     """Get the longest peptide encoded by an RNA sequence.
@@ -191,18 +190,32 @@ def get_longest_peptide(rna_sequence, genetic_code):
         A string of the longest sequence of amino acids encoded by
         `rna_sequence`.
     """
-    amino_acids = []
-    for orf in range(6):
-        for seq in (get_all_translations(rna_sequence, genetic_code)[orf:], reverse_and_complement(rna_sequence)[orf:]):
-            for s in seq:
-                aa_seq = translate_sequence(s, genetic_code)
-                for i in range(len(aa_seq)):
-                    for j in range(i, len(aa_seq)):
-                        peptide = aa_seq[i:j+1]
-                        if '*' not in peptide:
-                            amino_acids.append(peptide)
+    # Make a variable for the forward sequence
+    forward_seq = translate_sequence(rna_sequence, genetic_code)
 
-    return max(amino_acids, key=len, default="")
+    # Make a variable for the reverse complement sequence
+    reverse_complement_seq = reverse_and_complement(rna_sequence)
+
+    # Get all translations on both sequences and append the translations to the same variable
+    all_aa_sequences = []
+    longest_aa_sequence = ''
+
+    # Explore the three reading frames of the RNA sequence
+    for frame in range(3):
+        aa_sequence = translate_sequence(forward_seq[frame:], genetic_code)
+        all_aa_sequences.append(aa_sequence)
+        if len(aa_sequence) > len(longest_aa_sequence):
+            longest_aa_sequence = aa_sequence
+
+    # Explore the three reading frames of the reverse complement of the RNA sequence
+    for frame in range(3):
+        aa_sequence = translate_sequence(reverse_complement_seq[frame:frame+len(rna_sequence)], genetic_code)
+        all_aa_sequences.append(aa_sequence)
+        if len(aa_sequence) > len(longest_aa_sequence):
+            longest_aa_sequence = aa_sequence
+    return longest_aa_sequence
+
+
 
 
 if __name__ == '__main__':
