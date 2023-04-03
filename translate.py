@@ -202,17 +202,18 @@ def get_longest_peptide(rna_sequence, genetic_code):
 
     # Explore the three reading frames of the RNA sequence
     for frame in range(3):
-        aa_sequence = translate_sequence(forward_seq[frame:], genetic_code)
+        aa_sequence = get_all_translations(forward_seq, genetic_code)
         all_aa_sequences.append(aa_sequence)
         if len(aa_sequence) > len(longest_aa_sequence):
             longest_aa_sequence = aa_sequence
 
     # Explore the three reading frames of the reverse complement of the RNA sequence
     for frame in range(3):
-        aa_sequence = translate_sequence(reverse_complement_seq[frame:frame+len(rna_sequence)], genetic_code)
+        aa_sequence = get_all_translations(reverse_complement_seq, genetic_code)
         all_aa_sequences.append(aa_sequence)
         if len(aa_sequence) > len(longest_aa_sequence):
             longest_aa_sequence = aa_sequence
+
     return longest_aa_sequence
 
 
